@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#0D2B45">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="مدیریت مهر">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <title>مدیریت مأموریت‌های مهر</title>
+  <style>
+    :root{
+      --navy:#0D2B45;--teal:#1FA78A;--bg:#F4F7F9;--card:#fff;--text:#173042;
+      --muted:#6D7C88;--line:#DCE5EA;--danger:#B43B3B;--warn:#A26709;--shadow:0 8px 24px rgba(13,43,69,.08);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--text);padding-bottom:92px}
+    header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top)) 16px 12px}
+    .brand{display:flex;align-items:center;gap:12px}.brandmark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--navy),var(--teal));display:grid;place-items:center;color:#fff;font-weight:900;font-size:20px}
+    h1{font-size:18px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:3px}
+    main{padding:14px;max-width:760px;margin:auto}
+    .page{display:none}.page.active{display:block}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow);margin-bottom:12px}
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .section-title h2{font-size:16px;margin:0}
+    .pill{font-size:11px;padding:5px 9px;border-radius:99px;background:#E9F7F3;color:#116C59}
+    label{font-size:13px;font-weight:700;display:block;margin-bottom:6px}
+    input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px 13px;font:inherit;font-size:15px;color:var(--text);outline:none}
+    input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,167,138,.12)}
+    textarea{min-height:82px;resize:vertical}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .field{margin-bottom:10px}
+    .btn{border:0;border-radius:13px;padding:12px 14px;font:inherit;font-weight:800;cursor:pointer}
+    .btn.primary{background:var(--navy);color:#fff}.btn.teal{background:var(--teal);color:#fff}.btn.light{background:#EDF3F6;color:var(--navy)}.btn.danger{background:#FBECEC;color:var(--danger)}
+    .btn.full{width:100%}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions .btn{flex:1}
+    .service-list{display:grid;gap:8px}
+    .service-item{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:11px;background:#fff}
+    .service-item.popular{border-color:#7DCCBB;background:#F0FBF8}
+    .service-item input[type=checkbox]{width:22px;height:22px;accent-color:var(--teal)}
+    .service-name{font-weight:800;font-size:14px}.service-meta{font-size:12px;color:var(--muted);margin-top:3px}
+    .qty{width:66px;padding:9px;text-align:center}
+    .totalbox{position:sticky;bottom:82px;background:var(--navy);color:#fff;border-radius:18px;padding:14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 12px 30px rgba(13,43,69,.25);margin-top:12px;z-index:10}
+    .totalbox small{display:block;opacity:.75}.totalbox strong{font-size:21px}
+    nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:rgba(255,255,255,.97);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:7px 8px calc(7px + env(safe-area-inset-bottom));backdrop-filter:blur(16px)}
+    .navbtn{border:0;background:none;font:inherit;color:var(--muted);padding:7px 2px;font-size:11px}.navbtn.active{color:var(--navy);font-weight:900}.navbtn span{font-size:21px;display:block;margin-bottom:2px}
+    .mission{border:1px solid var(--line);border-radius:15px;padding:12px;margin-bottom:9px;background:#fff}
+    .mission-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.code{font-weight:900;color:var(--navy);direction:ltr}
+    .status{font-size:11px;padding:5px 8px;border-radius:99px;background:#EDF3F6}.mission p{margin:7px 0 0;font-size:13px;color:var(--muted)}
+    .money{font-weight:900;color:var(--teal)}
+    .empty{text-align:center;color:var(--muted);padding:30px 10px}
+    .fab{position:fixed;left:18px;bottom:94px;width:56px;height:56px;border-radius:50%;border:0;background:var(--teal);color:#fff;font-size:28px;box-shadow:0 10px 24px rgba(31,167,138,.35);z-index:25}
+    dialog{border:0;border-radius:20px;width:min(92vw,620px);padding:0;box-shadow:0 30px 80px rgba(0,0,0,.25)}
+    dialog::backdrop{background:rgba(13,43,69,.45);backdrop-filter:blur(3px)}
+    .dialog-head{padding:15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.dialog-body{padding:15px;max-height:72vh;overflow:auto}
+    .iconbtn{border:0;background:#EEF3F6;border-radius:10px;padding:7px 10px;font:inherit}
+    .hint{font-size:12px;color:var(--muted);line-height:1.8}
+    .badge-pop{font-size:10px;color:#087460;background:#DDF5EF;border-radius:99px;padding:3px 7px}
+    .danger-note{background:#FFF4F4;border:1px solid #F5C8C8;color:#8A2F2F;border-radius:13px;padding:10px;font-size:12px;line-height:1.8}
+    @media(max-width:520px){.grid2,.grid3{grid-template-columns:1fr}.service-item{grid-template-columns:auto 1fr}.service-item .qty{grid-column:2}.actions{flex-direction:column}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="brandmark">م</div><div><h1>مدیریت مأموریت‌های مهر</h1><div class="sub">ثبت خدمات، محاسبه تعرفه و آرشیو آفلاین</div></div></div>
+</header>
+
+<main>
+  <section id="page-new" class="page active">
+    <div class="card">
+      <div class="section-title"><h2>مشخصات مأموریت</h2><span class="pill">ثبت جدید</span></div>
+      <div class="grid2">
+        <div class="field"><label>نام بیمار / درخواست‌کننده</label><input id="patientName" placeholder="مثلاً محمد احمدی"></div>
+        <div class="field"><label>شماره تماس</label><input id="phone" inputmode="tel" placeholder="09xxxxxxxxx"></div>
+      </div>
+      <div class="field"><label>آدرس</label><textarea id="address" placeholder="محله، خیابان، پلاک و توضیحات دسترسی"></textarea></div>
+      <div class="grid2">
+        <div class="field"><label>زمان مراجعه</label><input id="visitTime" type="datetime-local"></div>
+        <div class="field"><label>وضعیت اولیه</label><select id="status"><option>جدید</option><option>اعزام‌شده</option><option>انجام‌شده</option><option>لغوشده</option><option>تسویه‌شده</option></select></div>
+      </div>
+      <div class="field"><label>توضیحات</label><textarea id="notes" placeholder="شرح حال کوتاه، نام نیروی اعزامی، وسایل لازم و..."></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><h2>انتخاب خدمات</h2><button class="iconbtn" onclick="switchPage('services')">مدیریت تعرفه‌ها</button></div>
+      <div class="field"><input id="serviceSearch" placeholder="جست‌وجوی خدمت..." oninput="renderSelectableServices()"></div>
+      <div id="selectableServices" class="service-list"></div>
+      <div id="noServices" class="empty" style="display:none">هنوز خدمتی تعریف نشده است.</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><h2>هزینه‌های تکمیلی</h2></div>
+      <div class="grid3">
+        <div class="field"><label>ایاب‌وذهاب</label><input id="transport" type="number" inputmode="numeric" min="0" value="0" oninput="updateTotal()"></div>
+        <div class="field"><label>تخفیف</label><input id="discount" type="number" inputmode="numeric" min="0" value="0" oninput="updateTotal()"></div>
+        <div class="field"><label>مبلغ دستی</label><input id="manualFee" type="number" inputmode="numeric" min="0" value="0" oninput="updateTotal()"></div>
+      </div>
+    </div>
+
+    <div class="totalbox"><div><small>جمع قابل دریافت</small><strong id="grandTotal">۰ تومان</strong></div><button class="btn teal" onclick="finalizeMission()">ثبت نهایی</button></div>
+  </section>
+
+  <section id="page-missions" class="page">
+    <div class="card">
+      <div class="section-title"><h2>سوابق مأموریت‌ها</h2><span id="missionCount" class="pill">۰ مورد</span></div>
+      <div class="field"><input id="missionSearch" placeholder="جست‌وجو با کد، نام، تلفن، آدرس یا وضعیت..." oninput="renderMissions()"></div>
+      <div class="grid2">
+        <div class="field"><label>فیلتر وضعیت</label><select id="missionStatusFilter" onchange="renderMissions()"><option value="">همه وضعیت‌ها</option><option>جدید</option><option>اعزام‌شده</option><option>انجام‌شده</option><option>لغوشده</option><option>تسویه‌شده</option></select></div>
+        <div class="field"><label>مرتب‌سازی</label><select id="missionSort" onchange="renderMissions()"><option value="new">جدیدترین</option><option value="old">قدیمی‌ترین</option><option value="amount">بیشترین مبلغ</option></select></div>
+      </div>
+    </div>
+    <div id="missionsList"></div>
+  </section>
+
+  <section id="page-services" class="page">
+    <div class="card">
+      <div class="section-title"><h2>مدیریت خدمات و تعرفه‌ها</h2><button class="btn teal" onclick="openServiceDialog()">افزودن خدمت</button></div>
+      <div class="field"><input id="manageServiceSearch" placeholder="جست‌وجو در خدمات..." oninput="renderManageServices()"></div>
+      <div id="manageServices"></div>
+    </div>
+  </section>
+
+  <section id="page-settings" class="page">
+    <div class="card">
+      <div class="section-title"><h2>تنظیمات و پشتیبان‌گیری</h2></div>
+      <div class="field"><label>پیشوند کد مأموریت</label><input id="codePrefix" value="MEHR" maxlength="12" oninput="saveSettings()"></div>
+      <div class="field"><label>واحد پول</label><select id="currencyUnit" onchange="saveSettings();renderAll()"><option value="تومان">تومان</option><option value="ریال">ریال</option></select></div>
+      <p class="hint">کد مأموریت به‌صورت خودکار و غیرتکراری ساخته می‌شود؛ نمونه: MEHR-1405-0001</p>
+      <div class="actions">
+        <button class="btn primary" onclick="exportBackup()">دریافت فایل پشتیبان</button>
+        <label class="btn light" style="text-align:center;cursor:pointer">بازیابی فایل<input id="restoreFile" type="file" accept="application/json" hidden onchange="restoreBackup(event)"></label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>نصب روی آیفون</h2></div>
+      <p class="hint">پس از باز کردن برنامه در Safari، دکمه Share را بزن، سپس Add to Home Screen را انتخاب کن. پس از اولین بارگذاری، برنامه بدون اینترنت اجرا می‌شود.</p>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>پاک‌سازی اطلاعات</h2></div>
+      <div class="danger-note">این عملیات غیرقابل بازگشت است. ابتدا فایل پشتیبان تهیه کن.</div>
+      <div class="actions" style="margin-top:10px">
+        <button class="btn danger" onclick="clearMissions()">حذف همه مأموریت‌ها</button>
+        <button class="btn danger" onclick="resetAll()">بازنشانی کامل برنامه</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<button class="fab" onclick="switchPage('new')" aria-label="مأموریت جدید">＋</button>
+
+<nav>
+  <button class="navbtn active" data-page="new" onclick="switchPage('new')"><span>＋</span>ثبت مأموریت</button>
+  <button class="navbtn" data-page="missions" onclick="switchPage('missions')"><span>🗂</span>سوابق</button>
+  <button class="navbtn" data-page="services" onclick="switchPage('services')"><span>🧾</span>تعرفه‌ها</button>
+  <button class="navbtn" data-page="settings" onclick="switchPage('settings')"><span>⚙️</span>تنظیمات</button>
+</nav>
+
+<dialog id="serviceDialog">
+  <div class="dialog-head"><strong id="serviceDialogTitle">افزودن خدمت</strong><button class="iconbtn" onclick="serviceDialog.close()">بستن</button></div>
+  <div class="dialog-body">
+    <input type="hidden" id="editServiceId">
+    <div class="field"><label>نام خدمت</label><input id="serviceName" placeholder="مثلاً سرم‌تراپی"></div>
+    <div class="grid2">
+      <div class="field"><label>قیمت پایه</label><input id="servicePrice" type="number" inputmode="numeric" min="0"></div>
+      <div class="field"><label>واحد</label><input id="serviceUnit" placeholder="هر نوبت / هر ساعت / هر روز"></div>
+    </div>
+    <div class="field"><label>دسته‌بندی</label><input id="serviceCategory" placeholder="مثلاً پرستاری، پزشک، تجهیزات"></div>
+    <div class="field"><label>توضیح کوتاه</label><textarea id="serviceDescription" placeholder="توضیحات اختیاری"></textarea></div>
+    <div class="grid2">
+      <label style="display:flex;align-items:center;gap:8px"><input id="servicePopular" type="checkbox" style="width:22px;height:22px"> پرکاربرد</label>
+      <label style="display:flex;align-items:center;gap:8px"><input id="serviceActive" type="checkbox" checked style="width:22px;height:22px"> فعال</label>
+    </div>
+    <button class="btn teal full" style="margin-top:14px" onclick="saveService()">ذخیره خدمت</button>
+  </div>
+</dialog>
+
+<dialog id="missionDialog">
+  <div class="dialog-head"><strong>جزئیات مأموریت</strong><button class="iconbtn" onclick="missionDialog.close()">بستن</button></div>
+  <div id="missionDialogBody" class="dialog-body"></div>
+</dialog>
+
+<script>
+const DBKEY='mehr_app_v1';
+const defaults={
+  services:[],
+  missions:[],
+  counter:0,
+  settings:{prefix:'MEHR',currency:'تومان'}
+};
+let db=loadDB();
+let selected={};
+
+function loadDB(){try{return {...defaults,...JSON.parse(localStorage.getItem(DBKEY)||'{}')}}catch(e){return structuredClone(defaults)}}
+function saveDB(){localStorage.setItem(DBKEY,JSON.stringify(db))}
+function faNum(n){return Number(n||0).toLocaleString('fa-IR')}
+function money(n){return faNum(Math.max(0,Math.round(n||0)))+' '+db.settings.currency}
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function nowLocal(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)}
+function jalaliYear(){try{return new Intl.DateTimeFormat('fa-IR-u-ca-persian',{year:'numeric'}).format(new Date()).replace(/\D/g,'')}catch(e){return String(new Date().getFullYear())}}
+document.getElementById('visitTime').value=nowLocal();
+
+function switchPage(name){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.page===name));
+  if(name==='missions')renderMissions();
+  if(name==='services')renderManageServices();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderSelectableServices(){
+  const q=document.getElementById('serviceSearch').value.trim().toLowerCase();
+  const list=db.services.filter(s=>s.active!==false && (!q || (s.name+' '+s.category+' '+s.description).toLowerCase().includes(q)))
+    .sort((a,b)=>(b.popular-a.popular)||((a.order||0)-(b.order||0))||a.name.localeCompare(b.name,'fa'));
+  const box=document.getElementById('selectableServices');
+  document.getElementById('noServices').style.display=list.length?'none':'block';
+  box.innerHTML=list.map(s=>{
+    const sel=selected[s.id]||{checked:false,qty:1};
+    return `<div class="service-item ${s.popular?'popular':''}">
+      <input type="checkbox" ${sel.checked?'checked':''} onchange="toggleService('${s.id}',this.checked)">
+      <div><div class="service-name">${esc(s.name)} ${s.popular?'<span class="badge-pop">پرکاربرد</span>':''}</div>
+      <div class="service-meta">${money(s.price)} · ${esc(s.unit||'هر نوبت')} ${s.category?'· '+esc(s.category):''}</div></div>
+      <input class="qty" type="number" min="1" value="${sel.qty||1}" ${sel.checked?'':'disabled'} onchange="changeQty('${s.id}',this.value)">
+    </div>`;
+  }).join('');
+}
+function toggleService(id,on){selected[id]=selected[id]||{qty:1};selected[id].checked=on;renderSelectableServices();updateTotal()}
+function changeQty(id,val){selected[id]=selected[id]||{};selected[id].qty=Math.max(1,Number(val)||1);updateTotal()}
+function calcTotal(){
+  let subtotal=0;
+  for(const [id,v] of Object.entries(selected)){
+    if(v.checked){const s=db.services.find(x=>x.id===id);if(s)subtotal+=Number(s.price||0)*Number(v.qty||1)}
+  }
+  return Math.max(0,subtotal+num('transport')+num('manualFee')-num('discount'));
+}
+function num(id){return Number(document.getElementById(id).value)||0}
+function updateTotal(){document.getElementById('grandTotal').textContent=money(calcTotal())}
+function nextCode(){
+  db.counter=(db.counter||0)+1;
+  const seq=String(db.counter).padStart(4,'0');
+  return `${(db.settings.prefix||'MEHR').toUpperCase()}-${jalaliYear()}-${seq}`;
+}
+function finalizeMission(){
+  const name=document.getElementById('patientName').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const services=Object.entries(selected).filter(([,v])=>v.checked).map(([id,v])=>{
+    const s=db.services.find(x=>x.id===id);return s?{id,name:s.name,price:Number(s.price),qty:Number(v.qty||1),unit:s.unit}:null
+  }).filter(Boolean);
+  if(!name){alert('نام بیمار یا درخواست‌کننده را وارد کن.');return}
+  if(!phone){alert('شماره تماس را وارد کن.');return}
+  if(!services.length && calcTotal()===0){alert('حداقل یک خدمت یا مبلغ دستی وارد کن.');return}
+  const mission={
+    id:crypto.randomUUID?crypto.randomUUID():Date.now().toString(36),
+    code:nextCode(),
+    createdAt:new Date().toISOString(),
+    patientName:name,phone,
+    address:document.getElementById('address').value.trim(),
+    visitTime:document.getElementById('visitTime').value,
+    status:document.getElementById('status').value,
+    notes:document.getElementById('notes').value.trim(),
+    services,
+    transport:num('transport'),discount:num('discount'),manualFee:num('manualFee'),
+    total:calcTotal()
+  };
+  db.missions.unshift(mission);saveDB();
+  alert(`مأموریت با کد ${mission.code} ثبت شد.`);
+  resetMissionForm();switchPage('missions');
+}
+function resetMissionForm(){
+  ['patientName','phone','address','notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('visitTime').value=nowLocal();document.getElementById('status').value='جدید';
+  ['transport','discount','manualFee'].forEach(id=>document.getElementById(id).value=0);
+  selected={};renderSelectableServices();updateTotal();
+}
+function renderMissions(){
+  const q=document.getElementById('missionSearch').value.trim().toLowerCase();
+  const st=document.getElementById('missionStatusFilter').value;
+  const sort=document.getElementById('missionSort').value;
+  let list=db.missions.filter(m=>(!st||m.status===st)&&(!q||JSON.stringify(m).toLowerCase().includes(q)));
+  list.sort((a,b)=>sort==='old'?new Date(a.createdAt)-new Date(b.createdAt):sort==='amount'?b.total-a.total:new Date(b.createdAt)-new Date(a.createdAt));
+  document.getElementById('missionCount').textContent=faNum(list.length)+' مورد';
+  document.getElementById('missionsList').innerHTML=list.length?list.map(m=>`<div class="mission" onclick="showMission('${m.id}')">
+    <div class="mission-top"><div><div class="code">${esc(m.code)}</div><strong>${esc(m.patientName)}</strong></div><span class="status">${esc(m.status)}</span></div>
+    <p>${esc(m.phone)} ${m.address?'· '+esc(m.address):''}</p>
+    <p><span class="money">${money(m.total)}</span> · ${new Date(m.createdAt).toLocaleString('fa-IR')}</p>
+  </div>`).join(''):'<div class="empty">مأموریتی پیدا نشد.</div>';
+}
+function showMission(id){
+  const m=db.missions.find(x=>x.id===id);if(!m)return;
+  document.getElementById('missionDialogBody').innerHTML=`
+    <div class="code" style="font-size:20px;margin-bottom:10px">${esc(m.code)}</div>
+    <div class="grid2">
+      <div class="field"><label>نام</label><input value="${esc(m.patientName)}" readonly></div>
+      <div class="field"><label>تماس</label><input value="${esc(m.phone)}" readonly></div>
+    </div>
+    <div class="field"><label>آدرس</label><textarea readonly>${esc(m.address)}</textarea></div>
+    <div class="field"><label>خدمات</label>${m.services.map(s=>`<div class="mission">${esc(s.name)} × ${faNum(s.qty)} <span class="money">${money(s.price*s.qty)}</span></div>`).join('')||'<p class="hint">خدمتی ثبت نشده</p>'}</div>
+    <div class="field"><label>توضیحات</label><textarea readonly>${esc(m.notes)}</textarea></div>
+    <div class="field"><label>وضعیت</label><select onchange="updateMissionStatus('${m.id}',this.value)">${['جدید','اعزام‌شده','انجام‌شده','لغوشده','تسویه‌شده'].map(x=>`<option ${m.status===x?'selected':''}>${x}</option>`).join('')}</select></div>
+    <div class="totalbox" style="position:static"><div><small>جمع کل</small><strong>${money(m.total)}</strong></div></div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn primary" onclick="copyMission('${m.id}')">کپی خلاصه</button>
+      <button class="btn light" onclick="duplicateMission('${m.id}')">ثبت مشابه</button>
+      <button class="btn danger" onclick="deleteMission('${m.id}')">حذف</button>
+    </div>`;
+  missionDialog.showModal();
+}
+function updateMissionStatus(id,status){const m=db.missions.find(x=>x.id===id);if(m){m.status=status;saveDB();renderMissions()}}
+function copyMission(id){
+  const m=db.missions.find(x=>x.id===id);if(!m)return;
+  const txt=`کد مأموریت: ${m.code}\nنام: ${m.patientName}\nتماس: ${m.phone}\nآدرس: ${m.address||'-'}\nخدمات:\n${m.services.map(s=>`- ${s.name} × ${s.qty}`).join('\n')}\nجمع: ${money(m.total)}\nوضعیت: ${m.status}\nتوضیحات: ${m.notes||'-'}`;
+  navigator.clipboard?.writeText(txt).then(()=>alert('خلاصه مأموریت کپی شد.')).catch(()=>prompt('متن را کپی کن:',txt));
+}
+function duplicateMission(id){
+  const m=db.missions.find(x=>x.id===id);if(!m)return;
+  document.getElementById('patientName').value=m.patientName;document.getElementById('phone').value=m.phone;
+  document.getElementById('address').value=m.address;document.getElementById('notes').value=m.notes;
+  selected={};m.services.forEach(s=>selected[s.id]={checked:true,qty:s.qty});
+  document.getElementById('transport').value=m.transport;document.getElementById('discount').value=m.discount;document.getElementById('manualFee').value=m.manualFee;
+  missionDialog.close();renderSelectableServices();updateTotal();switchPage('new');
+}
+function deleteMission(id){if(confirm('این مأموریت حذف شود؟')){db.missions=db.missions.filter(x=>x.id!==id);saveDB();missionDialog.close();renderMissions()}}
+
+function openServiceDialog(id=''){
+  document.getElementById('editServiceId').value=id;
+  const s=db.services.find(x=>x.id===id);
+  document.getElementById('serviceDialogTitle').textContent=s?'ویرایش خدمت':'افزودن خدمت';
+  document.getElementById('serviceName').value=s?.name||'';document.getElementById('servicePrice').value=s?.price||'';
+  document.getElementById('serviceUnit').value=s?.unit||'هر نوبت';document.getElementById('serviceCategory').value=s?.category||'';
+  document.getElementById('serviceDescription').value=s?.description||'';document.getElementById('servicePopular').checked=!!s?.popular;
+  document.getElementById('serviceActive').checked=s?s.active!==false:true;
+  serviceDialog.showModal();
+}
+function saveService(){
+  const id=document.getElementById('editServiceId').value;
+  const data={name:document.getElementById('serviceName').value.trim(),price:Number(document.getElementById('servicePrice').value)||0,
+    unit:document.getElementById('serviceUnit').value.trim(),category:document.getElementById('serviceCategory').value.trim(),
+    description:document.getElementById('serviceDescription').value.trim(),popular:document.getElementById('servicePopular').checked,
+    active:document.getElementById('serviceActive').checked};
+  if(!data.name){alert('نام خدمت را وارد کن.');return}
+  if(id){Object.assign(db.services.find(x=>x.id===id),data)}
+  else db.services.push({id:crypto.randomUUID?crypto.randomUUID():Date.now().toString(36),order:db.services.length,...data});
+  saveDB();serviceDialog.close();renderAll();
+}
+function renderManageServices(){
+  const q=document.getElementById('manageServiceSearch').value.trim().toLowerCase();
+  const list=db.services.filter(s=>!q||JSON.stringify(s).toLowerCase().includes(q)).sort((a,b)=>(b.popular-a.popular)||(a.order-b.order));
+  document.getElementById('manageServices').innerHTML=list.length?list.map((s,i)=>`<div class="mission">
+    <div class="mission-top"><div><strong>${esc(s.name)}</strong> ${s.popular?'<span class="badge-pop">پرکاربرد</span>':''}<p>${money(s.price)} · ${esc(s.unit||'هر نوبت')} · ${s.active!==false?'فعال':'غیرفعال'}</p></div>
+    <button class="iconbtn" onclick="openServiceDialog('${s.id}')">ویرایش</button></div>
+    <div class="actions" style="margin-top:8px"><button class="btn light" onclick="moveService('${s.id}',-1)">بالاتر</button><button class="btn light" onclick="moveService('${s.id}',1)">پایین‌تر</button><button class="btn danger" onclick="removeService('${s.id}')">حذف</button></div>
+  </div>`).join(''):'<div class="empty">خدمتی تعریف نشده است.</div>';
+}
+function moveService(id,dir){
+  const arr=[...db.services].sort((a,b)=>(a.order||0)-(b.order||0)),i=arr.findIndex(x=>x.id===id),j=i+dir;
+  if(i<0||j<0||j>=arr.length)return;[arr[i].order,arr[j].order]=[arr[j].order,arr[i].order];saveDB();renderManageServices();renderSelectableServices();
+}
+function removeService(id){
+  const used=db.missions.some(m=>m.services.some(s=>s.id===id));
+  if(confirm(used?'این خدمت در سوابق قبلی استفاده شده است. حذف فقط از فهرست فعلی انجام می‌شود و سوابق باقی می‌مانند. ادامه؟':'خدمت حذف شود؟')){
+    db.services=db.services.filter(x=>x.id!==id);delete selected[id];saveDB();renderAll();
+  }
+}
+function saveSettings(){db.settings.prefix=document.getElementById('codePrefix').value.trim()||'MEHR';db.settings.currency=document.getElementById('currencyUnit').value;saveDB()}
+function exportBackup(){
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`mehr-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href);
+}
+function restoreBackup(e){
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.services||!x.missions)throw 0;if(confirm('اطلاعات فعلی با فایل پشتیبان جایگزین شود؟')){db=x;saveDB();location.reload()}}catch{alert('فایل پشتیبان معتبر نیست.')}};
+  r.readAsText(f);
+}
+function clearMissions(){if(confirm('همه مأموریت‌ها حذف شوند؟')){db.missions=[];saveDB();renderMissions()}}
+function resetAll(){if(confirm('تمام خدمات، مأموریت‌ها و تنظیمات پاک شوند؟')){localStorage.removeItem(DBKEY);location.reload()}}
+function renderAll(){
+  document.getElementById('codePrefix').value=db.settings.prefix||'MEHR';document.getElementById('currencyUnit').value=db.settings.currency||'تومان';
+  renderSelectableServices();renderManageServices();renderMissions();updateTotal();
+}
+renderAll();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
